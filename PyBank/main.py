@@ -7,107 +7,65 @@ import csv
 #set the path for file
 budget_data_csv = os.path.join('Resources', 'budget_data.csv')
 
-#variables
-date = []
-profit_losses = []
-
-#Total number of months
-#def get_total_months(budget_data_csv):   
+#list and store data
 total_months = 0
+net_total = 0
+profit_changes = []
+dates = []
+previous_profit_change = None
+greatest_increase = 0
+greatest_decrease = 0
+increase_date = None
+decrease_date = None
 
-with open(budget_data_csv, 'r') as file:  
-    csv_reader = csv.reader(file)
+#open and read csv file 
+with open(budget_data_csv, 'r') as file:
+    csv_reader = csv.reader(file, delimiter=",")
+    
+    #header
     next(csv_reader)
 
-        #read the header 
-        #header = next(csv_reader)
-
-        #loop through the data
     for row in csv_reader:
         total_months +=1
+        date = row[0] #column in csv file
+        profit_change = int(row[1]) #for column in csv file
+        net_total += profit_change
+        
+        dates.append(date)
 
-#return total_months
+        if previous_profit_change is not None:
+            change = profit_change - previous_profit_change
+            profit_changes.append(change)
+
+            if change > greatest_increase:
+                greatest_increase = change
+                increase_date = date
+
+            if change < greatest_decrease:
+                greatest_decrease = change
+                decrease_date = date
+
+        previous_profit_change = profit_change
+
+average_change = sum(profit_changes) / len(profit_changes)
+
 #print statement
 print("Financial Analysis")
 print("-------------------------------")
-print("Total Months:" + " " + str(total_months))
+print("Total Months:" + " " + f"{total_months}")
+print("Total:" + " " + " " + f"${net_total}")
+print("Average change:" + " " + f"${average_change:.2f}")
+print("Greatest Increase in Profits:" + " " + increase_date + " " + f"(${greatest_increase})")
+print("Greatest Decrease in Profits:" + " " + decrease_date + " " + f"(${greatest_decrease})")
 
-#net total
-net_total = 0
+#output path
+output_path = os.path.join("analysis", "analysis.txt")
 
-with open(budget_data_csv, 'r') as file:
-        csv_reader = csv.reader(file)
-        next(csv_reader)
-
-        for row in csv_reader:
-            #try:
-                profit_loss = int(row[1]) 
-                net_total += profit_loss
-            #except ValueError:
-                #print(f"Invalid amount on row {csv_reader.line_num}: {row[1]}")
-
-#net_total
-#print statement
-print("Total:" + " " + "$" + str(net_total))
-
-#changes
-#changes = []
-
-#with open(budget_data_csv, 'r') as file:
-        #csv_reader = csv.reader(file)
-        #next(csv_reader)
-
-        #previous_profit_loss = 0
-
-        #for row in csv_reader:
-            #current_profit_loss = int(row[1])
-            #change = current_profit_loss - previous_profit_loss
-            #changes.append(changes)
-            #previous_profit_loss = current_profit_loss
-
-#Average change; len-returns the length of an object
-#if len(changes) == 0:   
-    #return 0
-
-            #total_changes = sum(changes)
-            #average_change = total_changes / len(changes)
-
-#print (f"Average Change:" + str(average_change))
-
-def profit_loss_changes(budget_data_csv):
-    changes = []
-
-    with open(budget_data_csv, 'r') as file:
-        csv_reader = csv.reader(file)
-        next(csv_reader)
-
-        previous_profit_loss = 0
-
-        for row in csv_reader:
-            try:
-                current_profit_loss = int(row[1])
-                change = current_profit_loss - previous_profit_loss
-                changes.append(change)
-                previous_profit_loss = current_profit_loss
-            except ValueError:
-                print(f"Invalid profit/loss on row {csv_reader.line_num}: {row[1]}")
-
-    return changes
-
-def average_change(changes):
-    if len(changes) == 0:
-        return 0
-    
-    total_changes = sum(changes)
-    average_change = total_changes / len(changes)
-    return average_change
-
-#print(f"Average Change: + str{average_change}")
-#(f"Average Change: {average_change}")
-
-print(f"Profit/Loss Changes: {profit_loss_changes}")
-print(f"Average Change: {average_change}")
-
-
-
-
+with open(output_path, 'w') as analysis:
+    analysis.write("Financial Analysis\n\n")
+    analysis.write("-------------------------------\n\n")
+    analysis.write("Total Months:" + " " + f"{total_months}\n\n")
+    analysis.write("Total:" + " " + f"${net_total}\n\n")
+    analysis.write("Average change:" + " " + f"${average_change:.2f}\n\n")
+    analysis.write("Greatest Increase in Profits:" + " " + increase_date + " " + f"(${greatest_increase})\n\n")
+    analysis.write("Greatest Decrease in Profits:" + " " + decrease_date + " " + f"(${greatest_decrease})\n\n")
