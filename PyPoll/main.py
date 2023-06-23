@@ -14,7 +14,6 @@ candidate_list_votes = {}
 max_votes = 0
 winner = None
 
-
 with open(election_data_csv, 'r') as file:  
     csv_reader = csv.reader(file, delimiter=",")
     
@@ -27,7 +26,6 @@ with open(election_data_csv, 'r') as file:
         candidate_list = row[2] #candidate_list is 2, since it's 3rd column and starts at 0
         candidate_lists.add(candidate_list)
 
-
         #getting vote for each candidate_list
         if candidate_list in candidate_list_votes:
             candidate_list_votes[candidate_list] += 1
@@ -35,7 +33,7 @@ with open(election_data_csv, 'r') as file:
             candidate_list_votes[candidate_list] = 1
 
 
-#print statement of the output
+#print statement of the output to terminal
 print("Election Results")
 print("------------------------------------")
 print("Total Votes:" + " " + f"{total_number_votes}")
